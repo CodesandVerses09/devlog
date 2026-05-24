@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> <link rel="icon" href="data:,">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevLog — My Learning Journal</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>+
+
+  <div class="container">
+    <h1>DevLog 📓</h1>
+    <p class="subtitle">What did you learn today?</p>
+
+    <div class="form-box">
+      <input 
+        type="text" 
+        id="topic" 
+        placeholder="Topic (e.g. Binary Search, Flexbox...)" 
+      />
+      <textarea 
+        id="log" 
+        placeholder="Write what you learned today..."
+        rows="5"
+      ></textarea>
+      <button onclick="saveLog()">Save Today's Log ✓</button>
+    </div>
+
+    <div class="logs" id="logs-container">
+      <!-- logs appear here -->
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #0d0d0d;
+  color: #f0f0f0;
+  font-family: 'Segoe UI', sans-serif;
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+.container {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 2rem;
+  color: #7c3aed;
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  color: #888;
+  margin-bottom: 30px;
+}
+
+.form-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+input, textarea {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: #f0f0f0;
+  padding: 12px 16px;
+  font-size: 1rem;
+  outline: none;
+  resize: none;
+}
+
+input:focus, textarea:focus {
+  border-color: #7c3aed;
+}
+
+button {
+  background: #7c3aed;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+button:hover {
+  background: #6d28d9;
+}
+
+.log-card {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+
+.log-card .tag {
+  color: #7c3aed;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.log-card .text {
+  color: #ccc;
+  line-height: 1.6;
+}
+
+.log-card .date {
+  color: #555;
+  font-size: 0.75rem;
+  margin-top: 10px;
+}
