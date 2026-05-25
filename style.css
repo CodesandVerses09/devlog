@@ -155,3 +155,37 @@ button:hover {
 .search-box:focus {
   border-color: #7c3aed;
 }
+.edit-btn {
+  position: absolute;
+  top: 12px;
+  right: 40px;
+  background: transparent;
+  border: none;
+  color: #555;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.edit-btn:hover {
+  color: #7c3aed;
+}
+
+.editing {
+  border: 1px solid #7c3aed !important;
+}
+
+.save-edit-btn {
+  background: #7c3aed;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.save-edit-btn:hover {
+  background: #6d28d9;
+}
