@@ -28,7 +28,15 @@
           rows="5"></textarea>
         <button onclick="saveLog()">Save Today's Log ✓</button>
       </div>
+      <input 
+  type="text" 
+  class="search-box" 
+  id="search-box" 
+  placeholder="🔍 Search logs..."
+  oninput="loadLogs()"
+/>
       <div class="tags-filter" id="tags-filter"></div>
+      
       <div class="logs" id="logs-container">
         <!-- logs appear here -->
       </div>

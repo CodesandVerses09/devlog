@@ -120,3 +120,38 @@ button:hover {
   font-size: 0.75rem;
   margin-top: 10px;
 }
+.log-card {
+  position: relative;
+}
+
+.delete-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: #555;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.delete-btn:hover {
+  color: #ef4444;
+}
+
+.search-box {
+  width: 100%;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: #f0f0f0;
+  padding: 12px 16px;
+  font-size: 1rem;
+  outline: none;
+  margin-bottom: 20px;
+}
+
+.search-box:focus {
+  border-color: #7c3aed;
+}
