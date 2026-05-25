@@ -7,7 +7,7 @@
 body {
   background: #0d0d0d;
   color: #f0f0f0;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: "Segoe UI", sans-serif;
   min-height: 100vh;
   padding: 40px 20px;
 }
@@ -35,7 +35,8 @@ h1 {
   margin-bottom: 40px;
 }
 
-input, textarea {
+input,
+textarea {
   background: #1a1a1a;
   border: 1px solid #333;
   border-radius: 8px;
@@ -46,7 +47,8 @@ input, textarea {
   resize: none;
 }
 
-input:focus, textarea:focus {
+input:focus,
+textarea:focus {
   border-color: #7c3aed;
 }
 
@@ -87,6 +89,34 @@ button:hover {
 
 .log-card .date {
   color: #555;
+  .tags-filter {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+
+  .tag-btn {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 20px;
+    color: #888;
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .tag-btn:hover {
+    border-color: #7c3aed;
+    color: #7c3aed;
+  }
+
+  .tag-btn.active {
+    background: #7c3aed;
+    border-color: #7c3aed;
+    color: white;
+  }
   font-size: 0.75rem;
   margin-top: 10px;
 }
