@@ -8,14 +8,63 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    +
+    <!-- AUTH SECTION -->
+    <div id="auth-section" class="container">
+      <h1>DevLog 📓</h1>
+      <p class="subtitle">Your daily coding journal</p>
 
-    <div class="container">
+      <div class="form-box">
+        <input type="email" id="auth-email" placeholder="Email" />
+        <input type="password" id="auth-password" placeholder="Password" />
+        <button
+          onclick="
+            signIn(
+              document.getElementById('auth-email').value,
+              document.getElementById('auth-password').value,
+            )
+          ">
+          Login
+        </button>
+        <button
+          style="background: #333"
+          onclick="
+            signUp(
+              document.getElementById('auth-email').value,
+              document.getElementById('auth-password').value,
+            )
+          ">
+          Sign Up
+        </button>
+      </div>
+    </div>
+
+    <!-- APP SECTION -->
+    <div id="app-section" class="container" style="display: none">
       <h1>DevLog 📓</h1>
       <p
         id="streak"
         style="color: #f59e0b; font-weight: bold; font-size: 1.2rem"></p>
-      <p class="subtitle">What did you learn today?</p>
+      <p id="logcount" style="color: #888; font-size: 0.9rem"></p>
+      <p class="subtitle">
+        What did you learn today?
+        <span
+          id="user-email"
+          style="color: #555; font-size: 0.8rem; float: right"></span>
+        <button
+          onclick="signOut()"
+          style="
+            float: right;
+            background: transparent;
+            border: 1px solid #333;
+            color: #888;
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+          ">
+          Logout
+        </button>
+      </p>
 
       <div class="form-box">
         <input
@@ -28,6 +77,7 @@
           rows="5"></textarea>
         <button onclick="saveLog()">Save Today's Log ✓</button>
       </div>
+
       <input
         type="text"
         class="search-box"
@@ -35,12 +85,9 @@
         placeholder="🔍 Search logs..."
         oninput="loadLogs()" />
       <div class="tags-filter" id="tags-filter"></div>
-
-      <div class="logs" id="logs-container">
-        <!-- logs appear here -->
-      </div>
+      <div class="logs" id="logs-container"></div>
     </div>
 
-    <script src="app.js"></script>
+    <script type="module" src="app.js"></script>
   </body>
 </html>
