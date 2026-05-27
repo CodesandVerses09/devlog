@@ -3,7 +3,7 @@ import { supabase } from "./supabase.js";
 let activeTag = "All";
 let currentUser = null;
 
-// AUTH FUNCTIONS
+// ── AUTH ──────────────────────────────────────────────
 async function signUp(email, password) {
   const { error } = await supabase.auth.signUp({ email, password });
   if (error) alert(error.message);
@@ -28,7 +28,7 @@ async function signOut() {
   showAuth();
 }
 
-// UI SWITCHING
+// ── UI SWITCHING ──────────────────────────────────────
 function showApp() {
   document.getElementById("auth-section").style.display = "none";
   document.getElementById("app-section").style.display = "block";
@@ -41,7 +41,47 @@ function showAuth() {
   document.getElementById("app-section").style.display = "none";
 }
 
-// LOG FUNCTIONS
+// ── STREAK ────────────────────────────────────────────
+function calculateStreak(logs) {
+  if (!logs || logs.length === 0) {
+    document.getElementById("streak").textContent = "";
+    return;
+  }
+
+  // Get unique dates logged (YYYY-MM-DD only, ignore time)
+  const loggedDates = new Set(
+    logs.map((log) => new Date(log.created_at).toISOString().slice(0, 10)),
+  );
+
+  let streak = 0;
+  const today = new Date();
+
+  // Walk backwards from today
+  for (let i = 0; i < 365; i++) {
+    const date = new Date(today);
+    date.setDate(today.getDate() - i);
+    const dateStr = date.toISOString().slice(0, 10);
+
+    if (loggedDates.has(dateStr)) {
+      streak++;
+    } else {
+      // Allow missing today (streak still counts if yesterday exists)
+      if (i === 0) continue;
+      break;
+    }
+  }
+
+  const el = document.getElementById("streak");
+  if (streak === 0) {
+    el.textContent = "";
+  } else if (streak === 1) {
+    el.textContent = "🔥 1 day streak — keep it going!";
+  } else {
+    el.textContent = `🔥 ${streak} day streak — you're on fire!`;
+  }
+}
+
+// ── SAVE LOG ──────────────────────────────────────────
 async function saveLog() {
   const topic = document.getElementById("topic").value.trim();
   const text = document.getElementById("log").value.trim();
@@ -63,25 +103,71 @@ async function saveLog() {
   }
 }
 
+// ── DELETE LOG ────────────────────────────────────────
 async function deleteLog(id) {
+  if (!confirm("Delete this log?")) return;
   await supabase.from("logs").delete().eq("id", id);
   loadLogs();
 }
 
+// ── EDIT LOG ──────────────────────────────────────────
+function enableEdit(id, currentText) {
+  const textEl = document.getElementById(`text-${id}`);
+  const editBtn = document.getElementById(`edit-btn-${id}`);
+
+  // Turn div into editable textarea
+  textEl.setAttribute("contenteditable", "true");
+  textEl.classList.add("editing");
+  textEl.focus();
+
+  // Move cursor to end
+  const range = document.createRange();
+  range.selectNodeContents(textEl);
+  range.collapse(false);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+
+  // Swap edit button to save button
+  editBtn.textContent = "💾";
+  editBtn.onclick = () => saveEdit(id);
+}
+
+async function saveEdit(id) {
+  const textEl = document.getElementById(`text-${id}`);
+  const newText = textEl.innerText.trim();
+
+  if (!newText) {
+    alert("Log text can't be empty!");
+    return;
+  }
+
+  const { error } = await supabase
+    .from("logs")
+    .update({ text: newText })
+    .eq("id", id);
+
+  if (error) alert(error.message);
+  else loadLogs();
+}
+
+// ── LOAD & RENDER LOGS ────────────────────────────────
 async function loadLogs() {
   const searchQuery = document.getElementById("search-box").value.toLowerCase();
 
-  let query = supabase
+  const { data: logs, error } = await supabase
     .from("logs")
     .select("*")
     .eq("user_id", currentUser.id)
     .order("created_at", { ascending: false });
 
-  const { data: logs, error } = await query;
   if (error) {
     console.error(error);
     return;
   }
+
+  // Update streak every time logs load
+  calculateStreak(logs);
 
   renderTags(logs);
 
@@ -106,9 +192,10 @@ async function loadLogs() {
       const card = document.createElement("div");
       card.className = "log-card";
       card.innerHTML = `
-        <button class="delete-btn" onclick="deleteLog('${log.id}')">✕</button>
+        <button class="delete-btn" onclick="deleteLog('${log.id}')" title="Delete">✕</button>
+        <button class="edit-btn" id="edit-btn-${log.id}" onclick="enableEdit('${log.id}', '')" title="Edit">✏️</button>
         <div class="tag"># ${log.topic}</div>
-        <div class="text">${log.text}</div>
+        <div class="text" id="text-${log.id}">${log.text}</div>
         <div class="date">${new Date(log.created_at).toDateString()}</div>
       `;
       container.appendChild(card);
@@ -135,14 +222,16 @@ function renderTags(logs) {
   });
 }
 
-// EXPOSE FUNCTIONS GLOBALLY
+// ── EXPOSE GLOBALS ────────────────────────────────────
 window.saveLog = saveLog;
 window.deleteLog = deleteLog;
+window.enableEdit = enableEdit;
+window.saveEdit = saveEdit;
 window.signUp = signUp;
 window.signIn = signIn;
 window.signOut = signOut;
 
-// CHECK SESSION ON LOAD
+// ── SESSION CHECK ON LOAD ─────────────────────────────
 supabase.auth.getSession().then(({ data: { session } }) => {
   if (session) {
     currentUser = session.user;

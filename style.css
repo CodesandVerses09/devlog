@@ -67,7 +67,48 @@ button:hover {
   background: #6d28d9;
 }
 
+/* ── STREAK ── */
+#streak {
+  color: #f59e0b;
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-bottom: 4px;
+}
+
+/* ── TAG FILTER BAR ── */
+/* FIX: was incorrectly nested inside .log-card .date */
+.tags-filter {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.tag-btn {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 20px;
+  color: #888;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tag-btn:hover {
+  border-color: #7c3aed;
+  color: #7c3aed;
+}
+
+.tag-btn.active {
+  background: #7c3aed;
+  border-color: #7c3aed;
+  color: white;
+}
+
+/* ── LOG CARDS ── */
 .log-card {
+  position: relative;
   background: #1a1a1a;
   border: 1px solid #2a2a2a;
   border-radius: 10px;
@@ -85,45 +126,16 @@ button:hover {
 .log-card .text {
   color: #ccc;
   line-height: 1.6;
+  white-space: pre-wrap; /* preserves line breaks */
 }
 
 .log-card .date {
   color: #555;
-  .tags-filter {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 24px;
-  }
-
-  .tag-btn {
-    background: #1a1a1a;
-    border: 1px solid #333;
-    border-radius: 20px;
-    color: #888;
-    padding: 6px 14px;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .tag-btn:hover {
-    border-color: #7c3aed;
-    color: #7c3aed;
-  }
-
-  .tag-btn.active {
-    background: #7c3aed;
-    border-color: #7c3aed;
-    color: white;
-  }
   font-size: 0.75rem;
   margin-top: 10px;
 }
-.log-card {
-  position: relative;
-}
 
+/* ── DELETE / EDIT BUTTONS ── */
 .delete-btn {
   position: absolute;
   top: 12px;
@@ -134,27 +146,14 @@ button:hover {
   font-size: 1rem;
   cursor: pointer;
   transition: color 0.2s;
+  padding: 0;
 }
 
 .delete-btn:hover {
+  background: transparent;
   color: #ef4444;
 }
 
-.search-box {
-  width: 100%;
-  background: #1a1a1a;
-  border: 1px solid #333;
-  border-radius: 8px;
-  color: #f0f0f0;
-  padding: 12px 16px;
-  font-size: 1rem;
-  outline: none;
-  margin-bottom: 20px;
-}
-
-.search-box:focus {
-  border-color: #7c3aed;
-}
 .edit-btn {
   position: absolute;
   top: 12px;
@@ -165,12 +164,15 @@ button:hover {
   font-size: 1rem;
   cursor: pointer;
   transition: color 0.2s;
+  padding: 0;
 }
 
 .edit-btn:hover {
+  background: transparent;
   color: #7c3aed;
 }
 
+/* ── EDIT MODE ── */
 .editing {
   border: 1px solid #7c3aed !important;
 }
@@ -188,4 +190,21 @@ button:hover {
 
 .save-edit-btn:hover {
   background: #6d28d9;
+}
+
+/* ── SEARCH BOX ── */
+.search-box {
+  width: 100%;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: #f0f0f0;
+  padding: 12px 16px;
+  font-size: 1rem;
+  outline: none;
+  margin-bottom: 20px;
+}
+
+.search-box:focus {
+  border-color: #7c3aed;
 }
