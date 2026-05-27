@@ -43,12 +43,12 @@ function showAuth() {
 
 // ── STREAK ────────────────────────────────────────────
 function calculateStreak(logs) {
+  const streakEl = document.getElementById("streak");
   if (!logs || logs.length === 0) {
-    document.getElementById("streak").textContent = "";
+    streakEl.textContent = "";
     return;
   }
 
-  // Get unique dates logged (YYYY-MM-DD only, ignore time)
   const loggedDates = new Set(
     logs.map((log) => new Date(log.created_at).toISOString().slice(0, 10)),
   );
@@ -56,29 +56,22 @@ function calculateStreak(logs) {
   let streak = 0;
   const today = new Date();
 
-  // Walk backwards from today
   for (let i = 0; i < 365; i++) {
     const date = new Date(today);
     date.setDate(today.getDate() - i);
     const dateStr = date.toISOString().slice(0, 10);
-
     if (loggedDates.has(dateStr)) {
       streak++;
     } else {
-      // Allow missing today (streak still counts if yesterday exists)
       if (i === 0) continue;
       break;
     }
   }
 
-  const el = document.getElementById("streak");
-  if (streak === 0) {
-    el.textContent = "";
-  } else if (streak === 1) {
-    el.textContent = "🔥 1 day streak — keep it going!";
-  } else {
-    el.textContent = `🔥 ${streak} day streak — you're on fire!`;
-  }
+  if (streak === 0) streakEl.textContent = "";
+  else if (streak === 1)
+    streakEl.textContent = "🔥 1 day streak — keep it going!";
+  else streakEl.textContent = `🔥 ${streak} day streak — you're on fire!`;
 }
 
 // ── SAVE LOG ──────────────────────────────────────────
@@ -111,49 +104,36 @@ async function deleteLog(id) {
 }
 
 // ── EDIT LOG ──────────────────────────────────────────
-function enableEdit(id, currentText) {
-  const textEl = document.getElementById(`text-${id}`);
-  const editBtn = document.getElementById(`edit-btn-${id}`);
-
-  // Turn div into editable textarea
+function enableEdit(id) {
+  const textEl = document.getElementById("text-" + id);
+  const editBtn = document.getElementById("edit-btn-" + id);
   textEl.setAttribute("contenteditable", "true");
   textEl.classList.add("editing");
   textEl.focus();
-
-  // Move cursor to end
-  const range = document.createRange();
-  range.selectNodeContents(textEl);
-  range.collapse(false);
-  const sel = window.getSelection();
-  sel.removeAllRanges();
-  sel.addRange(range);
-
-  // Swap edit button to save button
   editBtn.textContent = "💾";
   editBtn.onclick = () => saveEdit(id);
 }
 
 async function saveEdit(id) {
-  const textEl = document.getElementById(`text-${id}`);
+  const textEl = document.getElementById("text-" + id);
   const newText = textEl.innerText.trim();
-
   if (!newText) {
-    alert("Log text can't be empty!");
+    alert("Log text cannot be empty!");
     return;
   }
-
   const { error } = await supabase
     .from("logs")
     .update({ text: newText })
     .eq("id", id);
-
   if (error) alert(error.message);
   else loadLogs();
 }
 
 // ── LOAD & RENDER LOGS ────────────────────────────────
 async function loadLogs() {
-  const searchQuery = document.getElementById("search-box").value.toLowerCase();
+  const searchEl = document.getElementById("search-box");
+  const searchQuery =
+    searchEl && searchEl.value ? searchEl.value.toLowerCase() : "";
 
   const { data: logs, error } = await supabase
     .from("logs")
@@ -166,9 +146,7 @@ async function loadLogs() {
     return;
   }
 
-  // Update streak every time logs load
   calculateStreak(logs);
-
   renderTags(logs);
 
   let filtered =
@@ -193,7 +171,7 @@ async function loadLogs() {
       card.className = "log-card";
       card.innerHTML = `
         <button class="delete-btn" onclick="deleteLog('${log.id}')" title="Delete">✕</button>
-        <button class="edit-btn" id="edit-btn-${log.id}" onclick="enableEdit('${log.id}', '')" title="Edit">✏️</button>
+        <button class="edit-btn" id="edit-btn-${log.id}" onclick="enableEdit('${log.id}')" title="Edit">✏️</button>
         <div class="tag"># ${log.topic}</div>
         <div class="text" id="text-${log.id}">${log.text}</div>
         <div class="date">${new Date(log.created_at).toDateString()}</div>
@@ -202,8 +180,11 @@ async function loadLogs() {
     });
   }
 
-  document.getElementById("logcount").textContent =
-    logs.length > 0 ? `📝 ${logs.length} logs total` : "";
+  const logcountEl = document.getElementById("logcount");
+  if (logcountEl) {
+    logcountEl.textContent =
+      logs.length > 0 ? `📝 ${logs.length} logs total` : "";
+  }
 }
 
 function renderTags(logs) {
