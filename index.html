@@ -12,7 +12,6 @@
     <div id="auth-section" class="container">
       <h1>DevLog 📓</h1>
       <p class="subtitle">Your daily coding journal</p>
-
       <div class="form-box">
         <input type="email" id="auth-email" placeholder="Email" />
         <input type="password" id="auth-password" placeholder="Password" />
@@ -41,10 +40,10 @@
     <!-- APP SECTION -->
     <div id="app-section" class="container" style="display: none">
       <h1>DevLog 📓</h1>
-      <p
-        id="streak"
-        style="color: #f59e0b; font-weight: bold; font-size: 1.2rem"></p>
+
+      <p id="streak"></p>
       <p id="logcount" style="color: #888; font-size: 0.9rem"></p>
+
       <p class="subtitle">
         What did you learn today?
         <span
@@ -66,6 +65,18 @@
         </button>
       </p>
 
+      <!-- CONTRIBUTION GRID -->
+      <!-- 
+      This is the GitHub-style heatmap.
+      The div below is empty on load — app.js fills it with 84 squares.
+      Each square represents one day going back 12 weeks.
+    -->
+      <div class="grid-section">
+        <p class="grid-label">Last 12 weeks</p>
+        <div id="contribution-grid" class="contribution-grid"></div>
+      </div>
+
+      <!-- LOG FORM -->
       <div class="form-box">
         <input
           type="text"
@@ -78,13 +89,16 @@
         <button onclick="saveLog()">Save Today's Log ✓</button>
       </div>
 
-      <inputa
+      <!-- SEARCH + FILTER -->
+      <input
         type="text"
         class="search-box"
         id="search-box"
         placeholder="🔍 Search logs..."
         oninput="loadLogs()" />
       <div class="tags-filter" id="tags-filter"></div>
+
+      <!-- LOGS LIST -->
       <div class="logs" id="logs-container"></div>
     </div>
 

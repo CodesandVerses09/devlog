@@ -28,6 +28,73 @@ h1 {
   margin-bottom: 30px;
 }
 
+/* ── STREAK ── */
+#streak {
+  color: #f59e0b;
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-bottom: 4px;
+  min-height: 1.5rem;
+}
+
+/* ── CONTRIBUTION GRID ── */
+/*
+  How the grid works visually:
+  - display: grid with 84 columns (one per day)
+  - Each square is 12x12px with a small gap
+  - Color classes: grid-empty (dark), grid-light (soft purple), grid-bright (vivid purple)
+  - The grid reads left to right, oldest to newest
+*/
+.grid-section {
+  margin-bottom: 32px;
+}
+
+.grid-label {
+  color: #555;
+  font-size: 0.75rem;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.contribution-grid {
+  display: grid;
+  grid-template-columns: repeat(84, 12px);
+  gap: 3px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.grid-square {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  cursor: default;
+  transition: transform 0.1s;
+}
+
+.grid-square:hover {
+  transform: scale(1.4);
+}
+
+/* No log that day */
+.grid-empty {
+  background: #1e1e1e;
+  border: 1px solid #2a2a2a;
+}
+
+/* 1 log that day */
+.grid-light {
+  background: #5b21b6;
+}
+
+/* 2+ logs that day */
+.grid-bright {
+  background: #7c3aed;
+  box-shadow: 0 0 4px #7c3aed88;
+}
+
+/* ── FORM ── */
 .form-box {
   display: flex;
   flex-direction: column;
@@ -67,16 +134,7 @@ button:hover {
   background: #6d28d9;
 }
 
-/* ── STREAK ── */
-#streak {
-  color: #f59e0b;
-  font-weight: bold;
-  font-size: 1.2rem;
-  margin-bottom: 4px;
-}
-
 /* ── TAG FILTER BAR ── */
-/* FIX: was incorrectly nested inside .log-card .date */
 .tags-filter {
   display: flex;
   gap: 8px;
@@ -126,7 +184,7 @@ button:hover {
 .log-card .text {
   color: #ccc;
   line-height: 1.6;
-  white-space: pre-wrap; /* preserves line breaks */
+  white-space: pre-wrap;
 }
 
 .log-card .date {
@@ -175,6 +233,8 @@ button:hover {
 /* ── EDIT MODE ── */
 .editing {
   border: 1px solid #7c3aed !important;
+  border-radius: 4px;
+  padding: 4px;
 }
 
 .save-edit-btn {
