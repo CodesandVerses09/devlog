@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <link rel="icon" href="data:," />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DevLog — Public Profile</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      /* Profile-specific styles */
+      .profile-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 24px;
+        padding-bottom: 24px;
+        border-bottom: 1px solid #2a2a2a;
+      }
+
+      .avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: #7c3aed;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: white;
+        flex-shrink: 0;
+      }
+
+      .profile-info h2 {
+        font-size: 1.2rem;
+        color: #f0f0f0;
+        margin-bottom: 4px;
+      }
+
+      .profile-info p {
+        color: #555;
+        font-size: 0.85rem;
+      }
+
+      .back-link {
+        display: inline-block;
+        color: #555;
+        font-size: 0.85rem;
+        text-decoration: none;
+        margin-bottom: 24px;
+        transition: color 0.2s;
+      }
+
+      .back-link:hover {
+        color: #7c3aed;
+      }
+
+      .stats-row {
+        display: flex;
+        gap: 24px;
+        margin-bottom: 28px;
+      }
+
+      .stat-box {
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+        border-radius: 10px;
+        padding: 14px 20px;
+        flex: 1;
+        text-align: center;
+      }
+
+      .stat-box .stat-number {
+        font-size: 1.6rem;
+        font-weight: bold;
+        color: #7c3aed;
+      }
+
+      .stat-box .stat-label {
+        font-size: 0.75rem;
+        color: #555;
+        margin-top: 4px;
+      }
+
+      .section-title {
+        color: #888;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 12px;
+      }
+
+      .loading {
+        color: #555;
+        text-align: center;
+        padding: 40px 0;
+        font-size: 0.95rem;
+      }
+
+      .not-found {
+        color: #ef4444;
+        text-align: center;
+        padding: 40px 0;
+      }
+
+      /* Share button */
+      .share-btn {
+        background: transparent;
+        border: 1px solid #333;
+        color: #888;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-left: auto;
+      }
+
+      .share-btn:hover {
+        border-color: #7c3aed;
+        color: #7c3aed;
+        background: transparent;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Back link -->
+      <a class="back-link" href="index.html">← Back to DevLog</a>
+
+      <!-- Loading state -->
+      <div id="loading" class="loading">Loading profile...</div>
+
+      <!-- Profile content (hidden until loaded) -->
+      <div id="profile-content" style="display: none">
+        <!-- Header -->
+        <div class="profile-header">
+          <div class="avatar" id="avatar-letter">?</div>
+          <div class="profile-info">
+            <h2 id="profile-email">—</h2>
+            <p>DevLog • Public Learning Journal</p>
+          </div>
+          <button class="share-btn" onclick="copyLink()">
+            🔗 Share Profile
+          </button>
+        </div>
+
+        <!-- Stats row -->
+        <div class="stats-row">
+          <div class="stat-box">
+            <div class="stat-number" id="stat-logs">0</div>
+            <div class="stat-label">Total Logs</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-number" id="stat-streak">0</div>
+            <div class="stat-label">Day Streak 🔥</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-number" id="stat-topics">0</div>
+            <div class="stat-label">Topics Covered</div>
+          </div>
+        </div>
+
+        <!-- Contribution Grid -->
+        <p class="section-title">Last 12 weeks</p>
+        <div
+          class="contribution-grid"
+          id="contribution-grid"
+          style="margin-bottom: 32px"></div>
+
+        <!-- Tag filter -->
+        <div class="tags-filter" id="tags-filter"></div>
+
+        <!-- Logs -->
+        <p class="section-title" id="logs-title">All Logs</p>
+        <div id="logs-container"></div>
+      </div>
+
+      <!-- Not found state -->
+      <div id="not-found" class="not-found" style="display: none">
+        <p>Profile not found. Check the URL.</p>
+      </div>
+    </div>
+
+    <script type="module" src="profile.js"></script>
+  </body>
+</html>
