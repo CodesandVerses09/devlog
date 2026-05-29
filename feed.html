@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <link rel="icon" href="data:," />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DevLog — Community Feed</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .feed-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+      .feed-header a {
+        color: #7c3aed;
+        text-decoration: none;
+        font-size: 0.85rem;
+        border: 1px solid #7c3aed;
+        padding: 6px 14px;
+        border-radius: 6px;
+        transition: all 0.2s;
+      }
+      .feed-header a:hover {
+        background: #7c3aed;
+        color: white;
+      }
+      .feed-subtitle {
+        color: #888;
+        margin-bottom: 28px;
+        font-size: 0.95rem;
+      }
+      .feed-card {
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+        border-radius: 10px;
+        padding: 16px 20px;
+        margin-bottom: 16px;
+        position: relative;
+        transition: border-color 0.2s;
+      }
+      .feed-card:hover {
+        border-color: #3a3a3a;
+      }
+      .feed-card .user-handle {
+        font-size: 0.78rem;
+        color: #555;
+        margin-bottom: 6px;
+      }
+      .feed-card .user-handle a {
+        color: #7c3aed;
+        text-decoration: none;
+        font-weight: 600;
+      }
+      .feed-card .user-handle a:hover {
+        text-decoration: underline;
+      }
+      .feed-card .tag {
+        color: #7c3aed;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+      .feed-card .text {
+        color: #ccc;
+        line-height: 1.6;
+        white-space: pre-wrap;
+      }
+      .feed-card .date {
+        color: #555;
+        font-size: 0.75rem;
+        margin-top: 10px;
+      }
+      .feed-stats {
+        display: flex;
+        gap: 24px;
+        margin-bottom: 28px;
+        padding: 16px 20px;
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+        border-radius: 10px;
+      }
+      .feed-stats .stat {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .feed-stats .stat-value {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #7c3aed;
+      }
+      .feed-stats .stat-label {
+        font-size: 0.75rem;
+        color: #555;
+      }
+      .empty-feed {
+        text-align: center;
+        padding: 60px 20px;
+        color: #555;
+      }
+      .empty-feed p {
+        margin-bottom: 12px;
+      }
+      .loading {
+        text-align: center;
+        padding: 40px;
+        color: #555;
+      }
+      #feed-tags-filter {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="feed-header">
+        <h1>DevLog 📓</h1>
+        <a href="index.html">My Journal →</a>
+      </div>
+      <p class="feed-subtitle">
+        Community Feed — what everyone is learning today
+      </p>
+
+      <!-- Live stats bar -->
+      <div class="feed-stats" id="feed-stats">
+        <div class="stat">
+          <span class="stat-value" id="stat-logs">—</span>
+          <span class="stat-label">Total Logs</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" id="stat-learners">—</span>
+          <span class="stat-label">Learners</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" id="stat-today">—</span>
+          <span class="stat-label">Logged Today</span>
+        </div>
+      </div>
+
+      <!-- Search + Tags -->
+      <input
+        type="text"
+        class="search-box"
+        id="feed-search"
+        placeholder="🔍 Search the community feed..."
+        oninput="loadFeed()" />
+      <div id="feed-tags-filter"></div>
+
+      <!-- Feed -->
+      <div id="feed-container">
+        <div class="loading">Loading community logs...</div>
+      </div>
+    </div>
+
+    <script type="module" src="feed.js"></script>
+  </body>
+</html>
