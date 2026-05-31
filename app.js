@@ -32,21 +32,24 @@ async function signOut() {
 function showApp() {
   document.getElementById("auth-section").style.display = "none";
   document.getElementById("app-section").style.display = "block";
-  document.getElementById("user-email").textContent = currentUser.email;
+  const profileLink = document.getElementById("profile-link");
+  if (profileLink) profileLink.href = `profile.html?id=${currentUser.id}`;
   loadLogs();
 }
 
 function showAuth() {
-  document.getElementById("auth-section").style.display = "block";
+  document.getElementById("auth-section").style.display = "flex";
   document.getElementById("app-section").style.display = "none";
 }
 
 // ── STREAK ────────────────────────────────────────────
-// Walk backwards from today, count consecutive days that have a log
 function calculateStreak(logs) {
-  const streakEl = document.getElementById("streak");
+  const badge = document.getElementById("streak-badge");
+  const statStreak = document.getElementById("stat-streak");
+
   if (!logs || logs.length === 0) {
-    streakEl.textContent = "";
+    if (badge) badge.style.display = "none";
+    if (statStreak) statStreak.textContent = "0";
     return;
   }
 
@@ -64,36 +67,34 @@ function calculateStreak(logs) {
     if (loggedDates.has(dateStr)) {
       streak++;
     } else {
-      if (i === 0) continue; // don't break if today is missing yet
+      if (i === 0) continue;
       break;
     }
   }
 
-  if (streak === 0) streakEl.textContent = "";
-  else if (streak === 1)
-    streakEl.textContent = "🔥 1 day streak — keep it going!";
-  else streakEl.textContent = `🔥 ${streak} day streak — you're on fire!`;
+  if (statStreak) statStreak.textContent = streak;
+
+  if (streak === 0) {
+    if (badge) badge.style.display = "none";
+  } else {
+    if (badge) {
+      badge.style.display = "inline-block";
+      badge.textContent = `🔥 ${streak} day streak`;
+    }
+  }
 }
 
 // ── CONTRIBUTION GRID ─────────────────────────────────
-// This is the GitHub-style heatmap.
-// How it works:
-//   1. Count how many logs exist per day (stored as YYYY-MM-DD)
-//   2. Build 84 squares (12 weeks x 7 days), oldest to newest
-//   3. Color each square based on log count: 0=dark, 1=light purple, 2+=bright purple
-//   4. Add a tooltip showing date + count on hover
 function renderGrid(logs) {
   const container = document.getElementById("contribution-grid");
   if (!container) return;
 
-  // Step 1: count logs per date
   const countByDate = {};
   logs.forEach((log) => {
     const date = new Date(log.created_at).toISOString().slice(0, 10);
     countByDate[date] = (countByDate[date] || 0) + 1;
   });
 
-  // Step 2: build array of last 84 days (oldest first)
   const days = [];
   const today = new Date();
   for (let i = 83; i >= 0; i--) {
@@ -103,23 +104,17 @@ function renderGrid(logs) {
     days.push({ dateStr, count: countByDate[dateStr] || 0 });
   }
 
-  // Step 3: render squares
   container.innerHTML = "";
   days.forEach(({ dateStr, count }) => {
     const sq = document.createElement("div");
     sq.className = "grid-square";
-
-    // Color logic: 0 logs = empty, 1 = light, 2+ = bright
     if (count === 0) sq.classList.add("grid-empty");
     else if (count === 1) sq.classList.add("grid-light");
     else sq.classList.add("grid-bright");
-
-    // Tooltip on hover
     sq.title =
       count === 0
         ? `${dateStr} — no log`
         : `${dateStr} — ${count} log${count > 1 ? "s" : ""}`;
-
     container.appendChild(sq);
   });
 }
@@ -128,6 +123,7 @@ function renderGrid(logs) {
 async function saveLog() {
   const topic = document.getElementById("topic").value.trim();
   const text = document.getElementById("log").value.trim();
+  const difficulty = document.getElementById("difficulty").value;
 
   if (!topic || !text) {
     alert("Fill in both fields!");
@@ -136,12 +132,21 @@ async function saveLog() {
 
   const { error } = await supabase
     .from("logs")
-    .insert([{ user_id: currentUser.id, topic, text }]);
+    .insert([{ user_id: currentUser.id, topic, text, difficulty }]);
 
   if (error) alert(error.message);
   else {
     document.getElementById("topic").value = "";
     document.getElementById("log").value = "";
+    document.getElementById("difficulty").value = "Medium";
+    // close form
+    const form = document.getElementById("log-form");
+    const btn = document.getElementById("form-toggle");
+    if (form) form.style.display = "none";
+    if (btn) {
+      btn.textContent = "+ log today";
+      btn.classList.remove("open");
+    }
     loadLogs();
   }
 }
@@ -160,7 +165,7 @@ function enableEdit(id) {
   textEl.setAttribute("contenteditable", "true");
   textEl.classList.add("editing");
   textEl.focus();
-  editBtn.textContent = "💾";
+  editBtn.textContent = "save";
   editBtn.onclick = () => saveEdit(id);
 }
 
@@ -179,9 +184,24 @@ async function saveEdit(id) {
   else loadLogs();
 }
 
+// ── DIFFICULTY BADGE ──────────────────────────────────
+function diffBadge(difficulty) {
+  if (!difficulty) return "";
+  const cls =
+    difficulty === "Easy"
+      ? "diff-easy"
+      : difficulty === "Hard"
+        ? "diff-hard"
+        : "diff-medium";
+  return `<span class="diff-badge ${cls}">${difficulty}</span>`;
+}
+
+// ── ESCAPE HTML ───────────────────────────────────────
+function escapeHtml(str) {
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
 // ── LOAD & RENDER LOGS ────────────────────────────────
-// Central function — called on load, after save, after delete, after edit
-// Fetches ALL logs then: updates streak, renders grid, filters + shows cards
 async function loadLogs() {
   const searchEl = document.getElementById("search-box");
   const searchQuery =
@@ -198,14 +218,19 @@ async function loadLogs() {
     return;
   }
 
-  // Update all three views from the same data
   calculateStreak(logs);
   renderGrid(logs);
   renderTags(logs);
 
+  // stats
+  const statTotal = document.getElementById("stat-total");
+  const statTopics = document.getElementById("stat-topics");
+  if (statTotal) statTotal.textContent = logs.length;
+  if (statTopics)
+    statTopics.textContent = new Set(logs.map((l) => l.topic)).size;
+
   let filtered =
     activeTag === "All" ? logs : logs.filter((log) => log.topic === activeTag);
-
   if (searchQuery) {
     filtered = filtered.filter(
       (log) =>
@@ -218,26 +243,28 @@ async function loadLogs() {
   container.innerHTML = "";
 
   if (filtered.length === 0) {
-    container.innerHTML = '<p style="color:#555">No logs found.</p>';
+    container.innerHTML = '<p class="empty-state">// no logs found</p>';
   } else {
     filtered.forEach((log) => {
       const card = document.createElement("div");
       card.className = "log-card";
       card.innerHTML = `
-        <button class="delete-btn" onclick="deleteLog('${log.id}')" title="Delete">✕</button>
-        <button class="edit-btn" id="edit-btn-${log.id}" onclick="enableEdit('${log.id}')" title="Edit">✏️</button>
-        <div class="tag"># ${log.topic}</div>
-        <div class="text" id="text-${log.id}">${log.text}</div>
-        <div class="date">${new Date(log.created_at).toDateString()}</div>
+        <div class="card-actions">
+          <button class="edit-btn" id="edit-btn-${log.id}" onclick="enableEdit('${log.id}')">edit</button>
+          <button class="del-btn" onclick="deleteLog('${log.id}')">✕</button>
+        </div>
+        <div class="log-card-header">
+          <span class="log-topic">${escapeHtml(log.topic)}</span>
+          ${diffBadge(log.difficulty)}
+        </div>
+        <div class="log-text" id="text-${log.id}">${escapeHtml(log.text)}</div>
+        <div class="log-meta">
+          <span class="log-date">${new Date(log.created_at).toISOString().slice(0, 10)}</span>
+        </div>
       `;
       container.appendChild(card);
     });
   }
-
-  const logcountEl = document.getElementById("logcount");
-  if (logcountEl)
-    logcountEl.textContent =
-      logs.length > 0 ? `📝 ${logs.length} logs total` : "";
 }
 
 function renderTags(logs) {
@@ -247,7 +274,7 @@ function renderTags(logs) {
   topics.forEach((topic) => {
     const btn = document.createElement("button");
     btn.className = "tag-btn" + (topic === activeTag ? " active" : "");
-    btn.textContent = topic === "All" ? "# All" : "# " + topic;
+    btn.textContent = topic === "All" ? "# all" : "# " + topic.toLowerCase();
     btn.onclick = () => {
       activeTag = topic;
       loadLogs();
@@ -265,12 +292,10 @@ window.signUp = signUp;
 window.signIn = signIn;
 window.signOut = signOut;
 
-// ── SESSION CHECK ON LOAD ─────────────────────────────
+// ── SESSION CHECK ─────────────────────────────────────
 supabase.auth.getSession().then(({ data: { session } }) => {
   if (session) {
     currentUser = session.user;
     showApp();
-  } else {
-    showAuth();
-  }
+  } else showAuth();
 });

@@ -8,100 +8,133 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <!-- AUTH SECTION -->
-    <div id="auth-section" class="container">
-      <h1>DevLog 📓</h1>
-      <p class="subtitle">Your daily coding journal</p>
-      <div class="form-box">
-        <input type="email" id="auth-email" placeholder="Email" />
-        <input type="password" id="auth-password" placeholder="Password" />
+    <!-- ── AUTH ── -->
+    <div id="auth-section" class="auth-wrapper">
+      <div class="auth-box">
+        <div class="auth-logo">dev<span>log</span></div>
+        <p class="auth-tagline">// your dsa learning journal</p>
+        <input type="email" id="auth-email" placeholder="email" />
+        <input type="password" id="auth-password" placeholder="password" />
         <button
+          class="btn-primary"
           onclick="
             signIn(
               document.getElementById('auth-email').value,
               document.getElementById('auth-password').value,
             )
           ">
-          Login
+          login →
         </button>
         <button
-          style="background: #333"
+          class="btn-secondary"
           onclick="
             signUp(
               document.getElementById('auth-email').value,
               document.getElementById('auth-password').value,
             )
           ">
-          Sign Up
+          create account
         </button>
       </div>
     </div>
 
-    <!-- APP SECTION -->
-    <div id="app-section" class="container" style="display: none">
-      <h1>DevLog 📓</h1>
+    <!-- ── APP ── -->
+    <div id="app-section" style="display: none">
+      <div class="app-wrapper">
+        <!-- HEADER -->
+        <header class="app-header">
+          <div class="app-logo">dev<span>log</span></div>
+          <div class="header-right">
+            <span
+              id="streak-badge"
+              class="streak-badge"
+              style="display: none"></span>
+            <button class="logout-btn" onclick="signOut()">logout</button>
+          </div>
+        </header>
 
-      <p id="streak"></p>
-      <p id="logcount" style="color: #888; font-size: 0.9rem"></p>
+        <!-- CONTRIBUTION GRID -->
+        <div class="grid-section">
+          <p class="grid-label">// last 12 weeks</p>
+          <div id="contribution-grid" class="contribution-grid"></div>
+        </div>
 
-      <p class="subtitle">
-        What did you learn today?
-        <span
-          id="user-email"
-          style="color: #555; font-size: 0.8rem; float: right"></span>
-        <button
-          onclick="signOut()"
-          style="
-            float: right;
-            background: transparent;
-            border: 1px solid #333;
-            color: #888;
-            padding: 4px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.8rem;
-          ">
-          Logout
+        <!-- STAT ROW -->
+        <div class="stat-row">
+          <div class="stat-box">
+            <span class="stat-num" id="stat-total">0</span>
+            <span class="stat-lbl">total logs</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num" id="stat-streak">0</span>
+            <span class="stat-lbl">day streak</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num" id="stat-topics">0</span>
+            <span class="stat-lbl">topics</span>
+          </div>
+        </div>
+
+        <!-- NAV -->
+        <div class="nav-links">
+          <a href="feed.html" class="nav-link">// community feed</a>
+          <a href="profile.html" class="nav-link" id="profile-link"
+            >// my profile</a
+          >
+        </div>
+
+        <!-- ADD LOG TOGGLE -->
+        <button class="btn-add-toggle" id="form-toggle" onclick="toggleForm()">
+          + log today
         </button>
-      </p>
 
-      <!-- CONTRIBUTION GRID -->
-      <!-- 
-      This is the GitHub-style heatmap.
-      The div below is empty on load — app.js fills it with 84 squares.
-      Each square represents one day going back 12 weeks.
-    -->
-      <div class="grid-section">
-        <p class="grid-label">Last 12 weeks</p>
-        <div id="contribution-grid" class="contribution-grid"></div>
-      </div>
+        <!-- LOG FORM -->
+        <div class="log-form-section" id="log-form" style="display: none">
+          <div class="form-label">// topic</div>
+          <input
+            type="text"
+            id="topic"
+            placeholder="e.g. Binary Search, Arrays, DP..." />
+          <div class="form-label">// difficulty</div>
+          <select id="difficulty">
+            <option value="Easy">Easy</option>
+            <option value="Medium" selected>Medium</option>
+            <option value="Hard">Hard</option>
+          </select>
+          <div class="form-label">// what did you learn?</div>
+          <textarea
+            id="log"
+            rows="5"
+            placeholder="Write your insight, approach, key takeaway..."></textarea>
+          <button class="btn-log" onclick="saveLog()">save log ✓</button>
+        </div>
 
-      <!-- LOG FORM -->
-      <div class="form-box">
+        <!-- SEARCH -->
         <input
           type="text"
-          id="topic"
-          placeholder="Topic (e.g. Binary Search, Flexbox...)" />
-        <textarea
-          id="log"
-          placeholder="Write what you learned today..."
-          rows="5"></textarea>
-        <button onclick="saveLog()">Save Today's Log ✓</button>
+          class="search-box"
+          id="search-box"
+          placeholder="// search logs..."
+          oninput="loadLogs()" />
+
+        <!-- TAG FILTER -->
+        <div class="tags-filter" id="tags-filter"></div>
+
+        <!-- LOGS -->
+        <div class="logs" id="logs-container"></div>
       </div>
-
-      <!-- SEARCH + FILTER -->
-      <input
-        type="text"
-        class="search-box"
-        id="search-box"
-        placeholder="🔍 Search logs..."
-        oninput="loadLogs()" />
-      <div class="tags-filter" id="tags-filter"></div>
-
-      <!-- LOGS LIST -->
-      <div class="logs" id="logs-container"></div>
     </div>
 
     <script type="module" src="app.js"></script>
+    <script>
+      function toggleForm() {
+        const form = document.getElementById("log-form");
+        const btn = document.getElementById("form-toggle");
+        const open = form.style.display === "none";
+        form.style.display = open ? "block" : "none";
+        btn.textContent = open ? "✕ cancel" : "+ log today";
+        btn.classList.toggle("open", open);
+      }
+    </script>
   </body>
 </html>
