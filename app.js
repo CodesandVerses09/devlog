@@ -3,6 +3,14 @@ import { supabase } from "./supabase.js";
 let activeTag = "All";
 let currentUser = null;
 
+// ── IST HELPER ────────────────────────────────────────
+function toIST(dateInput) {
+  const date = new Date(dateInput);
+  return new Date(date.getTime() + 5.5 * 60 * 60 * 1000)
+    .toISOString()
+    .slice(0, 10);
+}
+
 // ── AUTH ──────────────────────────────────────────────
 async function signUp(email, password) {
   const { error } = await supabase.auth.signUp({ email, password });
@@ -53,17 +61,16 @@ function calculateStreak(logs) {
     return;
   }
 
-  const loggedDates = new Set(
-    logs.map((log) => new Date(log.created_at).toISOString().slice(0, 10)),
-  );
+  const loggedDates = new Set(logs.map((log) => toIST(log.created_at)));
 
   let streak = 0;
-  const today = new Date();
+  const todayIST = toIST(new Date());
 
   for (let i = 0; i < 365; i++) {
-    const date = new Date(today);
-    date.setDate(today.getDate() - i);
-    const dateStr = date.toISOString().slice(0, 10);
+    const date = new Date(todayIST);
+    date.setDate(date.getDate() - i);
+    const dateStr = toIST(date);
+
     if (loggedDates.has(dateStr)) {
       streak++;
     } else {
@@ -91,16 +98,16 @@ function renderGrid(logs) {
 
   const countByDate = {};
   logs.forEach((log) => {
-    const date = new Date(log.created_at).toISOString().slice(0, 10);
+    const date = toIST(log.created_at);
     countByDate[date] = (countByDate[date] || 0) + 1;
   });
 
   const days = [];
-  const today = new Date();
+  const todayIST = toIST(new Date());
   for (let i = 83; i >= 0; i--) {
-    const date = new Date(today);
-    date.setDate(today.getDate() - i);
-    const dateStr = date.toISOString().slice(0, 10);
+    const date = new Date(todayIST);
+    date.setDate(date.getDate() - i);
+    const dateStr = toIST(date);
     days.push({ dateStr, count: countByDate[dateStr] || 0 });
   }
 
@@ -139,7 +146,6 @@ async function saveLog() {
     document.getElementById("topic").value = "";
     document.getElementById("log").value = "";
     document.getElementById("difficulty").value = "Medium";
-    // close form
     const form = document.getElementById("log-form");
     const btn = document.getElementById("form-toggle");
     if (form) form.style.display = "none";
@@ -222,7 +228,6 @@ async function loadLogs() {
   renderGrid(logs);
   renderTags(logs);
 
-  // stats
   const statTotal = document.getElementById("stat-total");
   const statTopics = document.getElementById("stat-topics");
   if (statTotal) statTotal.textContent = logs.length;
@@ -231,6 +236,7 @@ async function loadLogs() {
 
   let filtered =
     activeTag === "All" ? logs : logs.filter((log) => log.topic === activeTag);
+
   if (searchQuery) {
     filtered = filtered.filter(
       (log) =>
@@ -259,7 +265,7 @@ async function loadLogs() {
         </div>
         <div class="log-text" id="text-${log.id}">${escapeHtml(log.text)}</div>
         <div class="log-meta">
-          <span class="log-date">${new Date(log.created_at).toISOString().slice(0, 10)}</span>
+          <span class="log-date">${toIST(log.created_at)}</span>
         </div>
       `;
       container.appendChild(card);
@@ -267,6 +273,7 @@ async function loadLogs() {
   }
 }
 
+// ── TAGS ──────────────────────────────────────────────
 function renderTags(logs) {
   const topics = ["All", ...new Set(logs.map((log) => log.topic))];
   const container = document.getElementById("tags-filter");
