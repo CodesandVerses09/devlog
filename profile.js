@@ -1,5 +1,6 @@
 import { supabase } from "./supabase.js";
 import { toIST } from "./dateUtils.js";
+import { getHandle } from "./handleUtils.js";
 
 // ── HOW THIS PAGE WORKS ───────────────────────────────
 // 1. Read the user ID from the URL: ?id=UUID
@@ -51,13 +52,12 @@ async function loadProfile(userId) {
 
 // ── PROFILE HEADER ────────────────────────────────────
 function setProfileHeader(userId, logs) {
-  // We don't have the email publicly, so show a friendly handle
-  // Use first 8 chars of UUID as a short ID
-  const shortId = userId.slice(0, 8);
-  document.getElementById("profile-email").textContent = "dev_" + shortId;
+  // Readable, deterministic handle instead of a raw UUID fragment
+  const handle = getHandle(userId);
+  document.getElementById("profile-email").textContent = handle;
   document.getElementById("avatar-letter").textContent =
-    shortId[0].toUpperCase();
-  document.title = `DevLog — dev_${shortId}`;
+    handle[0].toUpperCase();
+  document.title = `DevLog — ${handle}`;
 }
 
 // ── STATS ─────────────────────────────────────────────

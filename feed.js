@@ -1,5 +1,6 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 import { toIST } from "./dateUtils.js";
+import { getHandle } from "./handleUtils.js";
 
 const SUPABASE_URL = "https://fxnvfphphkjwgimfwzaj.supabase.co";
 const SUPABASE_KEY = "sb_publishable_o5ZKRnW9SZj8C9gJk_brfg_AQiW7nqT";
@@ -101,8 +102,8 @@ function renderFeed() {
   }
 
   filtered.forEach((log) => {
-    // Build a short public handle from user_id
-    const handle = "dev_" + log.user_id.split("-")[0];
+    // Readable, deterministic handle instead of a raw UUID fragment
+    const handle = getHandle(log.user_id);
     const profileUrl = `profile.html?id=${log.user_id}`;
 
     const card = document.createElement("div");
