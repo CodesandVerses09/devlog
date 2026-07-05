@@ -125,5 +125,9 @@ function escapeHtml(text) {
     .replace(/"/g, "&quot;");
 }
 
+// ─── EXPOSE FOR INLINE HTML HANDLERS (module scope isn't global) ──
+window.loadFeed = loadFeed;
+window.renderFeed = renderFeed;
+
 // ─── INIT ─────────────────────────────────────────────────────
 loadFeed();

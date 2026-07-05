@@ -168,12 +168,20 @@ function renderLogs(logs) {
     const card = document.createElement("div");
     card.className = "log-card";
     card.innerHTML = `
-      <div class="tag"># ${log.topic}</div>
-      <div class="text">${log.text}</div>
+      <div class="tag"># ${escapeHtml(log.topic)}</div>
+      <div class="text">${escapeHtml(log.text)}</div>
       <div class="date">${new Date(log.created_at).toDateString()}</div>
     `;
     container.appendChild(card);
   });
+}
+
+// ── ESCAPE HTML (prevents XSS from user-entered log text) ─
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
 }
 
 // ── SHARE BUTTON ──────────────────────────────────────
