@@ -258,6 +258,10 @@ body {
 .grid-bright {
   background: var(--accent);
 }
+.grid-today {
+  outline: 1.5px solid #f97316;
+  outline-offset: 1px;
+}
 
 /* ── NAV LINKS ─────────────────────────────── */
 .nav-links {

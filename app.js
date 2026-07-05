@@ -89,6 +89,11 @@ function showAuth() {
   document.getElementById("app-section").style.display = "none";
 }
 
+// ── SHARED: which dates (IST) have at least one log ───
+function getLoggedDatesSet(logs) {
+  return new Set(logs.map((log) => toIST(log.created_at)));
+}
+
 // ── STREAK ────────────────────────────────────────────
 function calculateStreak(logs) {
   const badge = document.getElementById("streak-badge");
@@ -100,7 +105,7 @@ function calculateStreak(logs) {
     return;
   }
 
-  const loggedDates = new Set(logs.map((log) => toIST(log.created_at)));
+  const loggedDates = getLoggedDatesSet(logs);
 
   let streak = 0;
   const todayIST = toIST(new Date());
@@ -147,16 +152,19 @@ function renderGrid(logs) {
     const date = new Date(todayIST);
     date.setDate(date.getDate() - i);
     const dateStr = toIST(date);
-    days.push({ dateStr, count: countByDate[dateStr] || 0 });
+    days.push({ dateStr, count: countByDate[dateStr] || 0, isToday: i === 0 });
   }
 
   container.innerHTML = "";
-  days.forEach(({ dateStr, count }) => {
+  days.forEach(({ dateStr, count, isToday }) => {
     const sq = document.createElement("div");
     sq.className = "grid-square";
     if (count === 0) sq.classList.add("grid-empty");
     else if (count === 1) sq.classList.add("grid-light");
     else sq.classList.add("grid-bright");
+    // Visually tie the grid to the streak: ring today's square so the
+    // "current streak" the badge reports maps onto something you can see.
+    if (isToday) sq.classList.add("grid-today");
     sq.title =
       count === 0
         ? `${dateStr} — no log`
