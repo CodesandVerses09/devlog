@@ -345,6 +345,19 @@ body {
   background: var(--hard-bg);
 }
 
+.diff-select {
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text);
+  font-family: "Space Mono", monospace;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  outline: none;
+}
+
 .log-text {
   font-size: 0.82rem;
   color: #9999b0;

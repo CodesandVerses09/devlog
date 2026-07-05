@@ -206,39 +206,58 @@ async function deleteLog(id) {
 // ── EDIT LOG ──────────────────────────────────────────
 function enableEdit(id) {
   const textEl = document.getElementById("text-" + id);
+  const diffEl = document.getElementById("diff-" + id);
   const editBtn = document.getElementById("edit-btn-" + id);
+
   textEl.setAttribute("contenteditable", "true");
   textEl.classList.add("editing");
   textEl.focus();
+
+  // Swap the static difficulty badge for an editable dropdown,
+  // pre-selected to the log's current difficulty.
+  const currentDifficulty = diffEl.dataset.difficulty || "Medium";
+  diffEl.innerHTML = `
+    <select id="diff-select-${id}" class="diff-select">
+      <option value="Easy" ${currentDifficulty === "Easy" ? "selected" : ""}>Easy</option>
+      <option value="Medium" ${currentDifficulty === "Medium" ? "selected" : ""}>Medium</option>
+      <option value="Hard" ${currentDifficulty === "Hard" ? "selected" : ""}>Hard</option>
+    </select>
+  `;
+
   editBtn.textContent = "save";
   editBtn.onclick = () => saveEdit(id);
 }
 
 async function saveEdit(id) {
   const textEl = document.getElementById("text-" + id);
+  const diffSelect = document.getElementById("diff-select-" + id);
+
   const newText = textEl.innerText.trim();
+  const newDifficulty = diffSelect ? diffSelect.value : undefined;
+
   if (!newText) {
     alert("Log text cannot be empty!");
     return;
   }
+
   const { error } = await supabase
     .from("logs")
-    .update({ text: newText })
+    .update({ text: newText, difficulty: newDifficulty })
     .eq("id", id);
   if (error) alert(error.message);
   else loadLogs();
 }
 
 // ── DIFFICULTY BADGE ──────────────────────────────────
-function diffBadge(difficulty) {
-  if (!difficulty) return "";
+function diffBadge(difficulty, logId) {
   const cls =
     difficulty === "Easy"
       ? "diff-easy"
       : difficulty === "Hard"
         ? "diff-hard"
         : "diff-medium";
-  return `<span class="diff-badge ${cls}">${difficulty}</span>`;
+  const label = difficulty || "Medium";
+  return `<span class="diff-badge ${cls}" id="diff-${logId}" data-difficulty="${label}">${label}</span>`;
 }
 
 // ── ESCAPE HTML ───────────────────────────────────────
@@ -300,7 +319,7 @@ async function loadLogs() {
         </div>
         <div class="log-card-header">
           <span class="log-topic">${escapeHtml(log.topic)}</span>
-          ${diffBadge(log.difficulty)}
+          ${diffBadge(log.difficulty, log.id)}
         </div>
         <div class="log-text" id="text-${log.id}">${escapeHtml(log.text)}</div>
         <div class="log-meta">
