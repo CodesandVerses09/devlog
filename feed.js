@@ -1,4 +1,5 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+import { toIST } from "./dateUtils.js";
 
 const SUPABASE_URL = "https://fxnvfphphkjwgimfwzaj.supabase.co";
 const SUPABASE_KEY = "sb_publishable_o5ZKRnW9SZj8C9gJk_brfg_AQiW7nqT";
@@ -33,9 +34,11 @@ function renderStats(logs) {
   const totalLogs = logs.length;
   const uniqueLearners = new Set(logs.map((l) => l.user_id)).size;
 
-  const today = new Date().toISOString().split("T")[0];
+  // "Logged today" — uses the same IST-based date logic as the rest of
+  // the app (dateUtils.js), so this can't disagree with your own streak.
+  const todayIST = toIST(new Date());
   const loggedToday = logs.filter(
-    (l) => l.created_at.split("T")[0] === today,
+    (l) => toIST(l.created_at) === todayIST,
   ).length;
 
   document.getElementById("stat-logs").textContent = totalLogs;

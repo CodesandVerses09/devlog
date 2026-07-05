@@ -1,15 +1,8 @@
 import { supabase } from "./supabase.js";
+import { toIST } from "./dateUtils.js";
 
 let activeTag = "All";
 let currentUser = null;
-
-// ── IST HELPER ────────────────────────────────────────
-function toIST(dateInput) {
-  const date = new Date(dateInput);
-  return new Date(date.getTime() + 5.5 * 60 * 60 * 1000)
-    .toISOString()
-    .slice(0, 10);
-}
 
 // ── AUTH ──────────────────────────────────────────────
 async function signUp(email, password) {

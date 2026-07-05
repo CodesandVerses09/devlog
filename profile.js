@@ -1,4 +1,5 @@
 import { supabase } from "./supabase.js";
+import { toIST } from "./dateUtils.js";
 
 // ── HOW THIS PAGE WORKS ───────────────────────────────
 // 1. Read the user ID from the URL: ?id=UUID
@@ -69,18 +70,17 @@ function setStats(logs) {
   const topics = new Set(logs.map((l) => l.topic));
   document.getElementById("stat-topics").textContent = topics.size;
 
-  // Streak — same logic as app.js
-  const loggedDates = new Set(
-    logs.map((log) => new Date(log.created_at).toISOString().slice(0, 10)),
-  );
+  // Streak — uses the same IST-based date logic as app.js (dateUtils.js),
+  // so this number can never disagree with the streak on your own journal.
+  const loggedDates = new Set(logs.map((log) => toIST(log.created_at)));
 
   let streak = 0;
-  const today = new Date();
+  const todayIST = toIST(new Date());
 
   for (let i = 0; i < 365; i++) {
-    const date = new Date(today);
-    date.setDate(today.getDate() - i);
-    const dateStr = date.toISOString().slice(0, 10);
+    const date = new Date(todayIST);
+    date.setDate(date.getDate() - i);
+    const dateStr = toIST(date);
     if (loggedDates.has(dateStr)) {
       streak++;
     } else {
@@ -93,22 +93,22 @@ function setStats(logs) {
 }
 
 // ── CONTRIBUTION GRID ─────────────────────────────────
-// Same logic as app.js — explained there
+// Uses the same IST-based date logic as app.js (via dateUtils.js)
 function renderGrid(logs) {
   const container = document.getElementById("contribution-grid");
 
   const countByDate = {};
   logs.forEach((log) => {
-    const date = new Date(log.created_at).toISOString().slice(0, 10);
+    const date = toIST(log.created_at);
     countByDate[date] = (countByDate[date] || 0) + 1;
   });
 
   const days = [];
-  const today = new Date();
+  const todayIST = toIST(new Date());
   for (let i = 83; i >= 0; i--) {
-    const date = new Date(today);
-    date.setDate(today.getDate() - i);
-    const dateStr = date.toISOString().slice(0, 10);
+    const date = new Date(todayIST);
+    date.setDate(date.getDate() - i);
+    const dateStr = toIST(date);
     days.push({ dateStr, count: countByDate[dateStr] || 0 });
   }
 
