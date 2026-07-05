@@ -108,12 +108,23 @@ function renderFeed() {
       <div class="user-handle">
         <a href="${profileUrl}" target="_blank">${handle}</a>
       </div>
-      <div class="tag"># ${log.topic}</div>
+      <div class="tag"># ${escapeHtml(log.topic)}</div>
       <div class="text">${escapeHtml(log.text)}</div>
+      ${codeBlock(log.code, log.code_language)}
       <div class="date">${new Date(log.created_at).toDateString()}</div>
     `;
     container.appendChild(card);
   });
+
+  if (window.hljs) hljs.highlightAll();
+}
+
+// ─── CODE SNIPPET BLOCK ────────────────────────────────────────
+function codeBlock(code, language) {
+  if (!code) return "";
+  return `
+    <pre class="code-block"><code class="language-${language || "cpp"}">${escapeHtml(code)}</code></pre>
+  `;
 }
 
 // ─── ESCAPE HTML (security) ───────────────────────────────────

@@ -170,10 +170,21 @@ function renderLogs(logs) {
     card.innerHTML = `
       <div class="tag"># ${escapeHtml(log.topic)}</div>
       <div class="text">${escapeHtml(log.text)}</div>
+      ${codeBlock(log.code, log.code_language)}
       <div class="date">${new Date(log.created_at).toDateString()}</div>
     `;
     container.appendChild(card);
   });
+
+  if (window.hljs) hljs.highlightAll();
+}
+
+// ── CODE SNIPPET BLOCK ─────────────────────────────────
+function codeBlock(code, language) {
+  if (!code) return "";
+  return `
+    <pre class="code-block"><code class="language-${language || "cpp"}">${escapeHtml(code)}</code></pre>
+  `;
 }
 
 // ── ESCAPE HTML (prevents XSS from user-entered log text) ─

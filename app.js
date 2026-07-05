@@ -170,21 +170,38 @@ async function saveLog() {
   const topic = document.getElementById("topic").value.trim();
   const text = document.getElementById("log").value.trim();
   const difficulty = document.getElementById("difficulty").value;
+  const codeEnabled = document.getElementById("code-toggle").checked;
+  const code = codeEnabled
+    ? document.getElementById("code").value.trim()
+    : null;
+  const codeLanguage = codeEnabled
+    ? document.getElementById("code-language").value
+    : null;
 
   if (!topic || !text) {
     alert("Fill in both fields!");
     return;
   }
 
-  const { error } = await supabase
-    .from("logs")
-    .insert([{ user_id: currentUser.id, topic, text, difficulty }]);
+  const { error } = await supabase.from("logs").insert([
+    {
+      user_id: currentUser.id,
+      topic,
+      text,
+      difficulty,
+      code,
+      code_language: codeLanguage,
+    },
+  ]);
 
   if (error) alert(error.message);
   else {
     document.getElementById("topic").value = "";
     document.getElementById("log").value = "";
     document.getElementById("difficulty").value = "Medium";
+    document.getElementById("code").value = "";
+    document.getElementById("code-toggle").checked = false;
+    document.getElementById("code-box").style.display = "none";
     const form = document.getElementById("log-form");
     const btn = document.getElementById("form-toggle");
     if (form) form.style.display = "none";
@@ -265,6 +282,14 @@ function escapeHtml(str) {
   return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
+// ── CODE SNIPPET BLOCK ────────────────────────────────
+function codeBlock(code, language) {
+  if (!code) return "";
+  return `
+    <pre class="code-block"><code class="language-${language || "cpp"}">${escapeHtml(code)}</code></pre>
+  `;
+}
+
 // ── LOAD & RENDER LOGS ────────────────────────────────
 async function loadLogs() {
   const searchEl = document.getElementById("search-box");
@@ -322,12 +347,15 @@ async function loadLogs() {
           ${diffBadge(log.difficulty, log.id)}
         </div>
         <div class="log-text" id="text-${log.id}">${escapeHtml(log.text)}</div>
+        ${codeBlock(log.code, log.code_language)}
         <div class="log-meta">
           <span class="log-date">${toIST(log.created_at)}</span>
         </div>
       `;
       container.appendChild(card);
     });
+
+    if (window.hljs) hljs.highlightAll();
   }
 }
 

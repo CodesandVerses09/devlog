@@ -519,6 +519,39 @@ body {
   background: var(--bg-card);
 }
 
+.code-toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  cursor: pointer;
+}
+
+.code-toggle-label input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+  cursor: pointer;
+}
+
+.code-textarea {
+  font-family: "Fira Code", "Space Mono", monospace !important;
+  font-size: 0.78rem !important;
+}
+
+.code-block {
+  margin: 10px 0 0;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow-x: auto;
+  font-size: 0.78rem;
+}
+
+.code-block code {
+  font-family: "Fira Code", "Space Mono", monospace;
+}
+
 .btn-log {
   width: 100%;
   background: transparent;

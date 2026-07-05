@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DevLog — My Learning Journal</title>
     <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   </head>
   <body>
     <!-- ── AUTH ── -->
@@ -139,6 +143,30 @@
             id="log"
             rows="5"
             placeholder="Write your insight, approach, key takeaway..."></textarea>
+
+          <label class="code-toggle-label">
+            <input
+              type="checkbox"
+              id="code-toggle"
+              onchange="toggleCodeBox()" />
+            add a code snippet
+          </label>
+
+          <div id="code-box" style="display: none">
+            <select id="code-language">
+              <option value="cpp" selected>C++</option>
+              <option value="python">Python</option>
+              <option value="java">Java</option>
+              <option value="javascript">JavaScript</option>
+              <option value="c">C</option>
+            </select>
+            <textarea
+              id="code"
+              rows="6"
+              class="code-textarea"
+              placeholder="paste your code here..."></textarea>
+          </div>
+
           <button class="btn-log" onclick="saveLog()">save log ✓</button>
         </div>
 
@@ -167,6 +195,12 @@
         form.style.display = open ? "block" : "none";
         btn.textContent = open ? "✕ cancel" : "+ log today";
         btn.classList.toggle("open", open);
+      }
+
+      function toggleCodeBox() {
+        const box = document.getElementById("code-box");
+        const checked = document.getElementById("code-toggle").checked;
+        box.style.display = checked ? "block" : "none";
       }
     </script>
   </body>
