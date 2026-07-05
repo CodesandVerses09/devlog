@@ -35,6 +35,39 @@
           ">
           create account
         </button>
+        <p class="auth-forgot">
+          <a
+            href="#"
+            onclick="
+              sendPasswordReset(document.getElementById('auth-email').value);
+              return false;
+            ">
+            forgot password?
+          </a>
+        </p>
+      </div>
+    </div>
+
+    <!-- ── RESET PASSWORD (shown only when arriving via recovery link) ── -->
+    <div id="reset-section" class="auth-wrapper" style="display: none">
+      <div class="auth-box">
+        <div class="auth-logo">dev<span>log</span></div>
+        <p class="auth-tagline">// set a new password</p>
+        <input type="password" id="reset-password" placeholder="new password" />
+        <input
+          type="password"
+          id="reset-password-confirm"
+          placeholder="confirm new password" />
+        <button
+          class="btn-primary"
+          onclick="
+            submitNewPassword(
+              document.getElementById('reset-password').value,
+              document.getElementById('reset-password-confirm').value,
+            )
+          ">
+          set new password →
+        </button>
       </div>
     </div>
 

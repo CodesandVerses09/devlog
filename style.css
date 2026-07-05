@@ -75,6 +75,22 @@ body {
   margin-bottom: 36px;
 }
 
+.auth-forgot {
+  margin-top: 14px;
+  text-align: center;
+  font-size: 0.75rem;
+}
+
+.auth-forgot a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.auth-forgot a:hover {
+  color: var(--accent, #7c7cff);
+  text-decoration: underline;
+}
+
 .auth-box input {
   width: 100%;
   background: var(--bg-input);

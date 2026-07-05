@@ -36,6 +36,45 @@ async function signOut() {
   showAuth();
 }
 
+// ── FORGOT / RESET PASSWORD ────────────────────────────
+async function sendPasswordReset(email) {
+  if (!email) {
+    alert("Enter your email above first, then click 'forgot password?'");
+    return;
+  }
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + window.location.pathname,
+  });
+  if (error) alert(error.message);
+  else alert("Check your email for a password reset link!");
+}
+
+function showResetForm() {
+  document.getElementById("auth-section").style.display = "none";
+  document.getElementById("app-section").style.display = "none";
+  document.getElementById("reset-section").style.display = "flex";
+}
+
+async function submitNewPassword(password, confirmPassword) {
+  if (!password || password.length < 6) {
+    alert("Password must be at least 6 characters.");
+    return;
+  }
+  if (password !== confirmPassword) {
+    alert("Passwords don't match.");
+    return;
+  }
+  const { error } = await supabase.auth.updateUser({ password });
+  if (error) {
+    alert(error.message);
+    return;
+  }
+  alert("Password updated! Please log in with your new password.");
+  await supabase.auth.signOut();
+  document.getElementById("reset-section").style.display = "none";
+  showAuth();
+}
+
 // ── UI SWITCHING ──────────────────────────────────────
 function showApp() {
   document.getElementById("auth-section").style.display = "none";
@@ -298,6 +337,16 @@ window.saveEdit = saveEdit;
 window.signUp = signUp;
 window.signIn = signIn;
 window.signOut = signOut;
+window.sendPasswordReset = sendPasswordReset;
+window.submitNewPassword = submitNewPassword;
+
+// ── LISTEN FOR PASSWORD RECOVERY LINK ─────────────────
+// Fires automatically when the user arrives via the emailed reset link.
+supabase.auth.onAuthStateChange((event) => {
+  if (event === "PASSWORD_RECOVERY") {
+    showResetForm();
+  }
+});
 
 // ── SESSION CHECK ─────────────────────────────────────
 supabase.auth.getSession().then(({ data: { session } }) => {
